@@ -2,7 +2,7 @@
 # Upload a Windows game build folder to STOVE from this Mac.
 #   ./upload.sh <build-dir> ["description"] [extra uploader options...]
 # Settings come from stove.local.env next to this script (gitignored):
-#   STOVE_GAME_ID=GM-XXXX-XXXXXXXX_IND   STOVE_USER=you@example.com   STOVE_CALLER_DETAIL=<key>
+#   STOVE_GAME_ID=GM-XXXX-XXXXXXXX_IND   STOVE_USER=you@example.com   [STOVE_CALLER_DETAIL=<key>, optional]
 # The password is read from the macOS Keychain (service "stove-uploader"); store it once with
 #   security add-generic-password -s stove-uploader -a you@example.com -w
 set -euo pipefail

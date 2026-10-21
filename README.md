@@ -20,7 +20,7 @@ v1.0.4.0, Core v1.0.4.0 and Updater v1.0.12.3: a 250 MB Unity Windows build uplo
 - macOS on Apple Silicon (Intel is untested)
 - `curl`, `unzip`, and either [uv](https://docs.astral.sh/uv/) or `python3` with pip (used only to fetch uv)
 - A STOVE **e-mail** account. Mobile OTP and third-party logins (Google, Naver, …) are not supported by the CLI.
-- The **caller-detail key** from STOVE support (see [49500](#49500-blocked-ip-address-at-sign-in))
+- Optional: the **caller-detail key** from STOVE support, only if sign-in is refused (see [49500](#49500-blocked-ip-address-at-sign-in))
 
 ## Setup
 
@@ -41,7 +41,8 @@ Create `stove.local.env` (gitignored):
 ```bash
 STOVE_GAME_ID=GM-XXXX-XXXXXXXX_IND
 STOVE_USER=you@example.com
-STOVE_CALLER_DETAIL=<key from store.support@smilegate.com>
+# Optional. Usually not needed in Korea; see 49500 below.
+# STOVE_CALLER_DETAIL=<key from store.support@smilegate.com>
 ```
 
 Store your password in the macOS Keychain once (it prompts for it):
@@ -80,12 +81,17 @@ Every problem below came up while getting the first upload through. Logs are in
 Core log: `POST https://s-api.onstove.com/sign/v2.1/pc/signin` → `{'code': 49500, 'message': 'blocked IP address'}`,
 then `SIGN_IN_CANNOT_RETRY_REQUEST` and exit code **118**.
 
-Despite the message, it was not the IP. It failed the same way on three different Korean networks,
-on two days, and with the **official Windows CLI** on a Windows PC. What fixed it was the
-`-cd` / `--caller-detail` key. STOVE's guide says the key is not needed inside Korea, but in
-October 2026 sign-in did not work without it. Request it from **store.support@smilegate.com**
-(mention the 49500 error and your game ID) and set `STOVE_CALLER_DETAIL`. Do not keep retrying
-while you wait.
+The `-cd` / `--caller-detail` key is **optional**. STOVE's guide says it is not needed inside
+Korea, and normally sign-in works without it.
+
+In our case sign-in was refused this way on three different Korean networks, on two days, and
+with the **official Windows CLI** on a Windows PC too. Our best guess is that the account was
+blocked after repeated sign-in attempts while setting this tool up. We did not confirm the cause
+with STOVE.
+
+What got past it was the caller-detail key. If you hit 49500, stop retrying (more attempts may
+extend the block), ask **store.support@smilegate.com** for the key (mention the 49500 error and
+your game ID), and set `STOVE_CALLER_DETAIL`. STOVE issues the key on request, so don't publish it.
 
 ### `'protection' and 'prot_params' require a passphrase`
 
@@ -153,17 +159,18 @@ STOVE 업로더 CLI는 Windows용만 배포됩니다. 이 도구는 공식 패�
 
 ```bash
 ./setup.sh
-# stove.local.env 에 STOVE_GAME_ID / STOVE_USER / STOVE_CALLER_DETAIL 작성
+# stove.local.env 에 STOVE_GAME_ID / STOVE_USER 작성 (STOVE_CALLER_DETAIL 은 선택)
 security add-generic-password -s stove-uploader -a you@example.com -w
 ./upload.sh /path/to/WindowsBuild "v1.0 demo"
 ```
 
 막혔던 것들:
 
-- **`49500 blocked IP address`** (종료 코드 118): IP 문제가 아니었습니다. 네트워크를 바꿔도, Windows 공식
-  CLI에서도 똑같았습니다. store.support@smilegate.com 에서 **caller-detail(-cd) 키**를 받아
-  `STOVE_CALLER_DETAIL` 에 넣으니 해결됐습니다. 가이드에는 국내에서는 없어도 된다고 되어 있지만
-  2026년 10월 기준으로는 필요했습니다.
+- **`49500 blocked IP address`** (종료 코드 118): caller-detail(-cd) 키는 **선택 사항**이고, 국내에서는
+  보통 없어도 로그인됩니다. 저희는 세팅하면서 로그인을 여러 번 시도하다 계정이 막힌 것으로 보입니다
+  (STOVE에 원인을 확인하지는 않았습니다). 네트워크를 바꿔도, Windows 공식 CLI에서도 같았습니다.
+  이 오류가 나면 재시도를 멈추고 store.support@smilegate.com 에 **caller-detail 키**를 요청해
+  `STOVE_CALLER_DETAIL` 에 넣으세요. 요청해서 받는 키이니 공개하지 마세요.
 - **`'protection' and 'prot_params' require a passphrase`** (결과 1400, 종료 코드 120): pycryptodome 4.x
   문제입니다. `requirements-mac.txt` 로 Windows 번들과 같은 버전(3.21.0 등)으로 고정했습니다.
 - **`continue-upload` 500 INTERNAL SERVER ERROR** (결과 1402, 종료 코드 122): 게임 ID 자리에 Studio URL의
