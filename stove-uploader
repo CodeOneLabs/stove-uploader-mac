@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Run the official STOVE Uploader CLI on macOS. Same options as the Windows CLI.
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+PY="$(ls -d "$ROOT"/.cache/pythons/cpython-3.11.*/bin/python3.11 2>/dev/null | head -1 || true)"
+if [ -z "$PY" ] || [ ! -f "$ROOT/runner/.runner" ]; then
+  echo "STOVE uploader is not set up. Run: $ROOT/setup.sh" >&2
+  exit 1
+fi
+read -r _ ENTRY VERSION < "$ROOT/runner/.runner"
+
+export STOVE_MAC_ROOT="$ROOT" FAKE_APP_VERSION="$VERSION" PATH="$ROOT/shim:$PATH"
+export PYTHONPATH="$ROOT/patches:$ROOT/runner:$ROOT/deps"
+cd "$ROOT/runner"
+exec "$PY" "$ENTRY" "$@"

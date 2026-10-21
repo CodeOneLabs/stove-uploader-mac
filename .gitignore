@@ -1,0 +1,11 @@
+# Created by setup.sh / at run time. Contains STOVE's own code, downloaded binaries and logs.
+.cache/
+deps/
+runner/
+updater_runner/
+core_runner/
+*.extract/
+.script_run_test/
+__pycache__/
+# Per-machine upload settings (account, caller-detail key)
+stove.local.env

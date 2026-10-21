@@ -1,0 +1,28 @@
+# Native macOS stand-ins for the libraries bundled in STOVEUploaderCLICore v1.0.4.0.
+# Versions match the bundle: newer ones change behaviour (pycryptodome 4 rejects the key export
+# the uploader uses; requests sets the User-Agent). Update together with a new CLI version.
+boto3==1.35.99
+botocore==1.35.99
+s3transfer==0.10.4
+pycryptodome==3.21.0
+requests==2.32.5
+urllib3==2.8.0
+certifi==2026.7.22
+charset-normalizer==3.5.1
+idna==3.20
+sentry-sdk==2.42.1
+click==8.2.1
+pyyaml==6.0.3
+python-dateutil==2.9.0.post0
+six==1.17.0
+jmespath==1.1.0
+colorama==0.4.6
+packaging==26.3
+pygments==2.21.0
+markdown-it-py==4.2.0
+bottle==0.13.4
+setuptools==65.5.0
+cffi==2.1.1
+rich
+# Not bundled on Windows; used by patches/sitecustomize.py
+psutil

@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Version shim: pymegastove reads the app version from git when not frozen.
+V="${FAKE_APP_VERSION:-1.0.0.0}"
+case "$1" in
+  tag) echo "v${V%.*}";;
+  rev-list) echo "${V##*.}";;
+  *) exit 0;;
+esac
