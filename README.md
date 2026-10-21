@@ -141,7 +141,10 @@ so your own Python setup is left alone.
 Flow: CLI → downloads the Updater into `runner/` → the Updater installs or updates the Core in
 `runner/STOVEUploaderCLICore/` → the Core signs in, uploads to S3 and reports the build.
 
-pyinstxtractor (GPL-3.0) is downloaded at setup time and is not part of this repository.
+## License
+
+MIT for the files in this repository. The STOVE Uploader that `setup.sh` downloads is Smilegate's
+software, and pyinstxtractor (GPL-3.0) is downloaded at setup time; neither is part of this repository.
 
 ## 한국어 요약
 
